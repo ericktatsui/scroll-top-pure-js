@@ -1,5 +1,6 @@
 var scrollTo = function (opt) {
-    var self;
+    var self,
+        cache = {};
 
     var scrollTo = function () {
         self = this;
@@ -43,7 +44,7 @@ var scrollTo = function (opt) {
         var position = 0,
             element;
 
-        if (opt.targetName && typeof (opt.targetName) == 'string') {
+        if (typeof (opt.targetName) == 'string') {
             element = document.querySelector(opt.targetName);
 
             if (element) {
@@ -51,9 +52,9 @@ var scrollTo = function (opt) {
             } else {
                 self.callFail();
             }
-        } else if (opt.position && typeof (opt.position) == 'number') {
+        } else if (typeof (opt.position) == 'number') {
             position = opt.position;
-        } else if (opt.target && typeof (opt.target) == 'object' && 'getBoundingClientRect' in opt.target) {
+        } else if (typeof (opt.target) == 'object' && 'getBoundingClientRect' in opt.target) {
             position = (opt.target.getBoundingClientRect()).top + window.scrollY;
         } else {
             self.callFail();
@@ -65,6 +66,7 @@ var scrollTo = function (opt) {
     scrollTo.prototype.easing = function () {
         var easeType;
 
+        if(!cache.easing){
         switch (opt.easing) {
             case 'easeInCubic':
                 easeType = self.easeInCubic;
@@ -77,7 +79,10 @@ var scrollTo = function (opt) {
                 break;
         }
 
-        console.log(easeType);
+        cache.easing = easeType;
+    }else{
+        easeType = cache.easing;
+    }
 
         return easeType;
     };
